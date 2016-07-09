@@ -1,0 +1,20 @@
+.knob {
+    width: 320px;
+    height: 320px;
+    background: rgba(52, 93, 103, 0.5)
+}
+
+.dial {
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background: red;
+    transform: translate(50%, 50%);
+}
+
+.dial-indicator {
+    color: white;
+    text-align: center;
+    display: block;
+    padding-top: 8px;
+}
