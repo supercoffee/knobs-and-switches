@@ -4,11 +4,27 @@
 
 (function() {
 
-    NodeList.prototype.forEach = HTMLCollection.prototype.forEach = Array.prototype.forEach;
+    NodeList.prototype.forEach =
+    HTMLCollection.prototype.forEach =
+    TouchList.prototype.forEach =
+    Array.prototype.forEach;
 
     Math.radiansToDegrees = function (radians) {
         return radians * (180/Math.PI);
     };
+
+    Object.defineProperties(TouchEvent.prototype, {
+        clientX: {
+            get: function() {
+                return this.targetTouches[0].clientX;
+            }
+        },
+        clientY: {
+            get: function() {
+                return this.targetTouches[0].clientY;
+            }
+        }
+    });
 
     var Vector = function (x, y) {
         this.x = x;
@@ -43,10 +59,20 @@
         this.element = element;
         this.activated = false;
         this.center = new Vector(element.offsetWidth, element.offsetHeight);
-        element.addEventListener("mousemove", this.drag.bind(this));
-        element.addEventListener('mousedown', this.activate);
-        element.addEventListener('mouseup', this.deactivate);
-        element.addEventListener('mouseleave', this.deactivate);
+
+        var boundedActivate     = this.activate.bind(this),
+            boundedDeactivate   = this.deactivate.bind(this),
+            boundedDrag         = this.drag.bind(this);
+
+        // Mouse events
+        element.addEventListener("mousemove", boundedDrag);
+        element.addEventListener('mousedown', boundedActivate);
+        element.addEventListener('mouseup', boundedDeactivate);
+        element.addEventListener('mouseleave', boundedDeactivate);
+        // Touch events
+        element.addEventListener('touchmove', boundedDrag);
+        element.addEventListener('touchstart', boundedActivate);
+        element.addEventListener('touchend', boundedDeactivate);
     }
 
     Knob.prototype.deactivate = function(e) {
@@ -60,11 +86,14 @@
     };
 
     Knob.prototype.drag = function(e) {
+        e.preventDefault();
+        if (!this.active) {
+            return;
+        }
         var mouseAbsPosition = new Vector(e.clientX, e.clientY),
             offset = this.center.offsetFromHere(mouseAbsPosition);
         var degrees = Math.radiansToDegrees(offset.angle);
-        console.log(offset.length);
-        console.log(offset.angle, degrees);
+
         this.element.style.transform = "rotate(" + degrees + "deg)";
     };
     var knobs = document.getElementsByClassName("dial");
