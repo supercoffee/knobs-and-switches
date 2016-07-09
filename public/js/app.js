@@ -22,7 +22,7 @@
      */
     Vector.prototype.offsetFromHere = function (vector) {
         // reverse y to switch "graphics" coords to normal cartesian
-        return new Vector(vector.x - this.y, this.y - vector.y);
+        return new Vector(vector.x - this.y, - (vector.y - this.y));
     };
 
     Object.defineProperty(Vector.prototype, 'length', {

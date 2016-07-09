@@ -1,7 +1,9 @@
 .knob {
     width: 320px;
     height: 320px;
-    background: rgba(52, 93, 103, 0.5)
+    background: rgba(52, 93, 103, 0.5);
+    display: flex;
+    align-items: center;
 }
 
 .dial {
